@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="demo.css">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+		
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script type="text/javascript" src="../src/jquery-custombind.js"></script>
+		<script type="text/javascript" src="demo.js"></script>
+		<title>jQuery CustomBind Demo #1</title>
+		<script>
+			$(document).ready(function() {
+				hljs.configure({useBR: true});
+				$('div.code').each(function(i, block) {
+					hljs.highlightBlock(block);
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div class="loadingContainer" style="display: none;" jb-context="ctxLoading">
+			<div jb-bind="text">Loading</div>
+		</div>
+		<div class="wrapper">
+			<h1>jQuery CustomBind Demo #1</h1>
+			<label>Define the context using 'jb-context' attribute</label>
+			<div class="demoFrame" jb-context="demo-1-context">
+				<div class="code">
+					&lt;div class="ctxFrame" jb-context="demo-1-context"&gt;
+				</div>
+			
+				<!-- Single property //-->
+				<label>Single Property using 'jb-bind' attribute and 'jb-event-*' for event handlers</label>
+				<div class="code">
+					&lt;span jb-bind="name" jb-event-click="testClick"&gt;&nbsp;&lt;/span&gt;
+				</div>
+				<label>Result:</label>
+				<div><span jb-bind="name" jb-event-click="testClick">&nbsp;</span></div>
+				
+				<div>&nbsp;</div>
+				<!-- Use repeating list //-->
+				<label>Repeating data using 'jb-repeat' attribute</label>
+				<div class="code">
+						&lt;div style="margin-top: 1em;" jb-repeat="(k, v) in items"&gt;
+						&lt;/div&gt;
+				</div>
+				<label>Result:</label>
+				<div style="margin-top: 1em;" jb-repeat="(k, v) in items">
+					<div>
+						<span jb-bind="k" style="display: inline-block;"></span>
+						<span jb-bind="v.name" style="display: inline-block; margin-left: 1em;"></span>
+					</div>
+				</div>
+				
+				<div>&nbsp;</div>
+				<!-- Once the Load() method is called , all events will be available //-->
+				<label>Interaction using button events</label>
+				<div class="code">
+					&lt;input type="button" jb-bind jb-event-click="loadOtherData" value="Load Other data" /&gt;
+				</div>
+				<div>
+					<input type="button" jb-bind jb-event-click="loadOtherData" value="Load Other data" />
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

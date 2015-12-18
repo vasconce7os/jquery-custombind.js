@@ -1,0 +1,59 @@
+@charset 'UTF-8';
+
+html {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	color: #555555;
+	margin: 0;
+	padding: 0;
+}
+
+label {
+	font-size: small;
+	font-weight: bold;
+	display: block;
+	margin-top: 1em;
+	margin-bottom: 0.3em;
+}
+
+.code {
+	max-width: 800px;
+	margin-top: 0em;
+	margin-bottom: 1em;
+	margin-left: 0em !important;
+}
+
+.wrapper {
+	margin: 2em;
+}
+
+.demoFrame {
+	border: 3px solid #555555;
+	display: inline-block;
+	padding-bottom: 1em;
+}
+
+.demoFrame > div, .demoFrame > label {
+	margin-left: 0.5em;
+}
+
+.loadingContainer {
+	position: fixed;
+	top: 0;
+	z-index: 9999;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255, 255,255, 0.8)
+}
+
+.loadingContainer > div {
+	padding-top: 3em;
+	font-size: 3em;
+	text-align: center;
+	font-family: monospace;
+	font-weight: bold;
+}
