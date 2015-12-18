@@ -4,7 +4,7 @@ This plugin is used to bind data into html containers (usually div tags) using j
 
 ## Demo
 
-You can find a demo on http://ole1986.github.io/jquery-custombind.js/examples/demo-1.html
+DEMO #1 - <a href="http://ole1986.github.io/jquery-custombind.js/examples/demo-1.html" target="_blank">click here</a> 
 
 ## Example
 
