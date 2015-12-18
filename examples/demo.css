@@ -25,16 +25,22 @@ label {
 	margin-top: 0em;
 	margin-bottom: 1em;
 	margin-left: 0em !important;
+	font-size: small;
+	white-space: pre;
 }
 
 .wrapper {
-	margin: 2em;
+	margin: 1em;
 }
 
 .demoFrame {
 	border: 3px solid #555555;
-	display: inline-block;
 	padding-bottom: 1em;
+}
+
+.ib {
+	display: inline-block;
+	vertical-align: top;
 }
 
 .demoFrame > div, .demoFrame > label {
