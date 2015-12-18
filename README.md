@@ -2,6 +2,10 @@
 
 This plugin is used to bind data into html containers (usually div tags) using jb-bind, jb-context and jb-event-* attributes
 
+## Demo
+
+You can find a demo on http://ole1986.github.io/jquery-custombind.js/examples/demo-1.html
+
 ## Example
 
 `examples/demo-1.html`
