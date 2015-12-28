@@ -99,11 +99,6 @@ function CustomBind(contextName, options) {
 			setTimeout(function(){ _load(optSource, rebind); }, 0);
 	};
 	
-	this.hasRepeater = function(el){
-		var found = $(el).parents('div[jb-repeat], tr[jb-repeat]');
-		if(found.length > 0) return true;
-		return false;
-	};
 	
 	var hideOther = function(){
 		CustomBind.$collection.forEach(function(value, index){
@@ -180,44 +175,47 @@ function CustomBind(contextName, options) {
 			
 			if($item.attr('jb-render') == '1' && self.settings.isBound || $item.attr('jb-render') == '2') return;
 			
-			// check if bind is in a repeater
-			var inRepeater = false;
-			if(!fromRepeater) inRepeater = self.hasRepeater($item);
-			
-			if(fromRepeater)
-				$item.attr('jb-render', '2');
-			else
-				$item.attr('jb-render', '1');
-			
-			if(!inRepeater) {
-				// use jb-show attribute to conditionally DISPLAY this element
-				var isCond = parseCondition($item.attr('jb-show'), s);
-				if(!isCond) {
-					$item.hide();
-					return;
-				}
-				
-				// use jb-cond attribute to conditionally BIND this element
-				isCond = parseCondition($item.attr('jb-cond'), s);
-				if(!isCond) {
-					// do not bind the value from data source
-					return;
-				}
-				
-				var bindValue = $item.attr('jb-bind');
-				var tagName =  $item.prop('tagName');
-				if(tagName == 'INPUT' && bindValue)
-					$item.val( parseBindText(s,bindValue) );
-				else
-					$item.text( parseBindText(s,bindValue) );
-				
-				parseBindAttr(s,item);
-				// (re)bind all events
-				bindEvent(item, s);
-				
-				// lifetime of the DOM if defined in settings
-				if(self.settings.lifetime > 0) setTimeout(function(){ $item.remove() }, self.settings.lifetime);
-			}
+            // when the controls are inside a repeater, but its not called from the repeater, ignore it
+            var found = $item.closest('div[jb-repeat], tr[jb-repeat]');
+            if(found.length > 0 && typeof fromRepeater === 'undefined') return;
+            
+            // bindControls has been called from bindRepeater
+            if(typeof fromRepeater !== 'undefined') {
+                // skip nested repeaters
+                if(found.length > 0 && found != fromRepeater) return;
+                
+                $item.attr('jb-render', '2');
+            } else {
+                $item.attr('jb-render', '1');
+            }
+                        
+            // use jb-show attribute to conditionally DISPLAY this element
+            var isCond = parseCondition($item.attr('jb-show'), s);
+            if(!isCond) {
+                $item.hide();
+                return;
+            }
+            
+            // use jb-cond attribute to conditionally BIND this element
+            isCond = parseCondition($item.attr('jb-cond'), s);
+            if(!isCond) {
+                // do not bind the value from data source
+                return;
+            }
+            
+            var bindValue = $item.attr('jb-bind');
+            var tagName =  $item.prop('tagName');
+            if(tagName == 'INPUT' && bindValue)
+                $item.val( parseBindText(s,bindValue) );
+            else
+                $item.text( parseBindText(s,bindValue) );
+            
+            parseBindAttr(s,item);
+            // (re)bind all events
+            bindEvent(item, s);
+            
+            // lifetime of the DOM if defined in settings
+            if(self.settings.lifetime > 0) setTimeout(function(){ $item.remove() }, self.settings.lifetime);
 		});
 		dfd.resolve();
 		return dfd.promise();
@@ -246,20 +244,25 @@ function CustomBind(contextName, options) {
 			}
 		});
 	};
-		
-	var bindRepeater = function(s){
+	
+	var bindRepeater = function(s, el, nested){
 		var dfd = $.Deferred();
 		if(!s) s = source;
 		if(!s) return false;
-
-		// clear everything before (re)bind when its
-		if(!self.settings.persistent && !self.settings.isBound)
-			$element.find("*[jb-render='2']").remove();
+        
+        if(!el) el = $element;
+        
+    	// clear everything before (re)bind when its
+		if(!self.settings.persistent && !self.settings.isBound && !nested)
+			el.find("*[jb-render='2']").remove();
 		
-		$element.find('div[jb-repeat], tr[jb-repeat]').each(function(){
+        if(nested)
+            el.find('*[jb-render]').each(function() { $(this).removeAttr('jb-render'); });
+        
+        el.find('div[jb-repeat], tr[jb-repeat]').each(function(){
 			var repeater = $(this);
-			
-			if(self.settings.isBound) return;
+            
+            if(self.settings.isBound && !nested) return;
 			
 			repeater.hide();
 			var expr = $(this).attr('jb-repeat');
@@ -267,7 +270,7 @@ function CustomBind(contextName, options) {
 			var keyPath = matches[1];
 			var valuePath = matches[2];
 			var sourcePath = matches[3];
-			
+                        
 			if(!s[sourcePath]) return;
 			
 			for(var i = 0; i < s[sourcePath].length; i++) {
@@ -279,9 +282,12 @@ function CustomBind(contextName, options) {
 				var obj = {};
 				obj[keyPath] = i;
 				obj[valuePath] = s[sourcePath][i];
-				parseBindAttr(obj,copy[0]);
-				
-				bindControls( obj, copy[0] , true);
+                
+                bindRepeater(obj[valuePath] , copy, true);
+                
+                parseBindAttr(obj, copy[0]);
+				bindControls( obj, copy[0] , repeater);
+                
 				copy.attr('jb-render', '2');
 				
 				// lifetime of the DOM if defined in settings
@@ -289,7 +295,6 @@ function CustomBind(contextName, options) {
 				
 				repeater.before(copy);
 			}
-			//repeater.remove();
 		})
 		dfd.resolve();
 		return dfd.promise();
