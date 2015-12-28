@@ -1,7 +1,7 @@
 /**
  * jQuery custom binding extension
  * 
- * Author: Ole Koeckemann <ole.koeckemann@bbc-chartering.com>
+ * Author: Ole Koeckemann <ole.k@web.de>
  * Requirements: jQuery jQuery.promise
  */
 
